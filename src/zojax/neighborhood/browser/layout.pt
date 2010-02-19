@@ -1,0 +1,19 @@
+<div id="z-space" i18n:domain="zojax.neighborhood">
+
+  <div class="z-space-views-wrapper" tal:condition="layout/types">
+    <div class="z-space-views">
+      <ul tal:define="url layoutcontext/@@absolute_url">
+  <li tal:repeat="type layout/types"
+      tal:attributes="class python:type['selected'] and 'selected' or ''">
+    <a tal:attributes="href string:$url/${type/name}/">
+      <img tal:attributes="src type/icon/url"
+     tal:condition="type/icon/url|nothing" />
+      <tal:block tal:content="type/title" i18n:translate="" /></a>
+  </li>
+      </ul>
+    </div>
+  </div>
+  <div class="visualClear"></div>
+
+  <tal:block content="structure view/render" />
+</div>

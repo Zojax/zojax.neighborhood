@@ -1,0 +1,223 @@
+===
+SEO
+===
+
+    >>> from zope import component, interface
+    >>> from zope.testbrowser.testing import Browser
+    >>> from zope.app.component.hooks import setSite
+    >>> from zope.app.testing.functional import getRootFolder
+    >>> from zope.app.intid import IntIds
+    >>> from zope.app.intid.interfaces import IIntIds
+    >>> from zojax.catalog.catalog import Catalog, ICatalog
+
+    >>> root = getRootFolder()
+    >>> setSite(root)
+    >>> sm = root.getSiteManager()
+
+    >>> root['ids'] = IntIds()
+    >>> sm.registerUtility(root['ids'], IIntIds)
+
+    >>> root['catalog'] = Catalog()
+    >>> sm.registerUtility(root['catalog'], ICatalog)
+
+
+Configure SEO
+
+    >>> admin = Browser()
+    >>> admin.handleErrors = False
+    >>> admin.addHeader("Authorization", "Basic mgr:mgrpw")
+
+    >>> admin.open("http://localhost/settings/")
+    >>> admin.getLink('SEO').click()
+    >>> admin.getControl(name="configlet.widgets.enabled:list").value = ['true']
+    >>> admin.getControl('Robots').value = r"""User-agent: *
+    ... Disallow: /
+    ... """
+    >>> admin.getControl('Sitemap').value = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>'
+    >>> admin.getControl(name='configlet.buttons.save').click()
+
+Browser site
+
+    >>> anon = Browser()
+    >>> anon.handleErrors = False
+    >>> anon.open("http://localhost/robots.txt")
+    >>> print anon.contents
+    User-agent: *
+    Disallow: /
+    <BLANKLINE>
+
+    >>> anon.headers['Content-Type']
+    'text/plain;charset=utf-8'
+
+    >>> anon.open("http://localhost/sitemap.xml")
+    >>> print anon.contents
+    <?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>
+
+    >>> anon.headers['Content-Type']
+    'text/xml;charset=utf-8'
+
+When we have disabled neighborhood configlet, we have NotFound for all pages
+
+    >>> admin.getControl(name="configlet.widgets.enabled:list").value = ['false']
+    >>> admin.getControl(name='configlet.buttons.save').click()
+
+    >>> anon.open("http://localhost/robots.txt")
+    Traceback (most recent call last):
+    ...
+    NotFound: Object: <...Folder object at ...>, name: u'robots.txt'
+
+    >>> anon.open("http://localhost/sitemap.xml")
+    Traceback (most recent call last):
+    ...
+    NotFound: Object: <...Folder object at ...>, name: u'sitemap.xml'
+
+For empty values the same:
+
+    >>> admin.getControl(name="configlet.widgets.enabled:list").value = ['true']
+    >>> admin.getControl('Robots').value = ''
+    >>> admin.getControl('Sitemap').value = ''
+    >>> admin.getControl(name='configlet.buttons.save').click()
+
+    >>> anon.open("http://localhost/robots.txt")
+    Traceback (most recent call last):
+    ...
+    NotFound: Object: <...Folder object at ...>, name: u'robots.txt'
+
+    >>> anon.open("http://localhost/sitemap.xml")
+    Traceback (most recent call last):
+    ...
+    NotFound: Object: <...Folder object at ...>, name: u'sitemap.xml'
+
+
+HTML Tags
+=========
+
+    >>> from zope import interface, event
+    >>> from zope.lifecycleevent import ObjectModifiedEvent
+    >>> from zope.annotation.interfaces import IAttributeAnnotatable
+    >>> from zojax.content.type.interfaces import IContent, IContentType
+    >>> from zojax.neighborhood.interfaces import IHTMLTags
+    >>> from zojax.neighborhood.tests.tests import Content, PortalContent
+
+    >>> interface.alsoProvides(root, IContent, IAttributeAnnotatable)
+
+Test neighborhood tags for content that doesn't support neighborhood.tags extension
+
+    >>> root['content'] = Content(title=u'Simple content')
+
+    >>> tags = IHTMLTags(root['content'], None)
+    >>> tags is None
+    True
+
+    >>> anon.open("http://localhost/content/test.html")
+    >>> print anon.contents
+    <html>
+      <head>
+        <title>
+          Simple content - top
+        </title>
+      </head>
+      ...
+    </html>
+
+    >>> admin.open("http://localhost/content/context.html/content/")
+    >>> admin.getLink('SEO tags').click()
+    Traceback (most recent call last):
+    ...
+    LinkNotFoundError
+
+Test neighborhood tags for content that supports neighborhood.tags extension
+
+    >>> root['pcontent'] = PortalContent(title=u'Portal content')
+
+    >>> anon.open("http://localhost/pcontent/test.html")
+    >>> print anon.contents
+    <html>
+      <head>
+        <title>
+           Portal content - top
+        </title>
+      </head>
+      ...
+    </html>
+
+    >>> admin.open("http://localhost/pcontent/context.html/neighborhood/")
+    >>> admin.getControl('Title').value = u'Content title'
+    >>> admin.getControl('Description').value = u'Content description'
+    >>> admin.getControl('Keywords').value = u'Content keywords'
+    >>> admin.getControl('Save').click()
+
+    >>> anon.open("http://localhost/pcontent/test.html")
+    >>> print anon.contents
+    <html>
+      <head>
+        <title>
+          Content title - top
+        </title><meta name="description" content="Content description" /><meta name="keywords" content="Content keywords" />
+      </head>
+    ...
+    </html>
+
+Check neighborhood tags for portal object
+
+    >>> admin.open("http://localhost/test.html")
+    >>> print admin.contents
+    <html>
+      <head>
+         <title>
+           top
+         </title>
+      </head>
+    ...
+    </html>
+
+    >>> admin.open("http://localhost/context.html/neighborhood/")
+    >>> admin.getControl('Title').value = u'Default portal title'
+    >>> admin.getControl('Description').value = u'Default portal description'
+    >>> admin.getControl('Keywords').value = u'Default portal keywords'
+    >>> admin.getControl('Save').click()
+
+    >>> admin.open("http://localhost/test.html")
+    >>> print admin.contents
+    <html>
+      <head>
+        <title>
+           Default portal title
+        </title><meta name="description" content="Default portal description" /><meta name="keywords" content="Default portal keywords" />
+      </head>
+    ...
+    </html>
+
+Check content
+
+    >>> anon.open("http://localhost/content/test.html")
+    >>> print anon.contents
+    <html>
+      <head>
+        <title>
+           Simple content - Default portal title
+        </title><meta name="description" content="Default portal description" /><meta name="keywords" content="Default portal keywords" />
+      </head>
+    ...
+    </html>
+
+    >>> anon.open("http://localhost/pcontent/test.html")
+    >>> print anon.contents
+    <html>
+      <head>
+        <title>
+          Content title - Default portal title
+        </title><meta name="description" content="Content description" /><meta name="keywords" content="Content keywords" />
+      </head>
+    ...
+    </html>
+
+
+SEO configlet contents
+----------------------
+
+    >>> admin.open("http://localhost/settings/")
+    >>> admin.getLink('SEO').click()
+    >>> admin.getLink('Portal content').click()
+
+    >>> setSite(None)

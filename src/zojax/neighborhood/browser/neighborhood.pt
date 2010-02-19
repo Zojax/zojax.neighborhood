@@ -1,0 +1,4 @@
+<div id="z-space" i18n:domain="zojax.neighborhood">
+  <h1>Recent stuff in my neighborhood</h1>
+  <div tal:content="structure provider:neighborhood.contents"></div>
+</div>

@@ -1,0 +1,17 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:zojax="http://namespaces.zope.org/zojax"
+   i18n_domain="zojax.neighborhood">
+
+  <!-- overview workspace -->
+  <adapter
+     name="neighborhood"
+     factory=".workspace.NeighborhoodWorkspaceFactory" />
+
+  <class class=".workspace.NeighborhoodWorkspaceFactory">
+    <require
+       permission="zope.View"
+       interface=".interfaces.INeighborhoodWorkspace" />
+  </class>
+
+</configure>

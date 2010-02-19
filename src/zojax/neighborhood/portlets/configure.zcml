@@ -1,0 +1,18 @@
+<configure
+ xmlns="http://namespaces.zope.org/zope"
+ xmlns:browser="http://namespaces.zope.org/browser"
+ xmlns:zojax="http://namespaces.zope.org/zojax"
+ i18n_domain="zojax.neighborhood">
+
+  <zojax:portlet
+     name="portlet.neighborhood"
+     title="Neighborhood content"
+     schema=".interfaces.INeighborhoodPortlet"
+     class=".portlet.Neighborhood" />
+     
+  <zojax:pagelet
+     type="portlet.view"
+     template="portlet.pt"
+     for=".interfaces.INeighborhoodPortlet" />
+
+</configure>
