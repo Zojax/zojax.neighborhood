@@ -1,7 +1,7 @@
-<div id="z-space" i18n:domain="zojax.neighborhood">
+<div id="z-neighborhood" i18n:domain="zojax.neighborhood">
 
-  <div class="z-space-views-wrapper" tal:condition="layout/types">
-    <div class="z-space-views">
+  <div class="z-neighborhood-views-wrapper" tal:condition="layout/types">
+    <div class="z-neighborhood-views">
       <ul tal:define="url layoutcontext/@@absolute_url">
   <li tal:repeat="type layout/types"
       tal:attributes="class python:type['selected'] and 'selected' or ''">
