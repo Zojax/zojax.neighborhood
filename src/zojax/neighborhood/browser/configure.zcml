@@ -65,7 +65,7 @@
   <adapter
      name="title"
      for="* * .content.NeighborhoodContentsTable"
-     factory="zojax.content.browser.table.TitleColumn" />
+     factory="zojax.content.table.title.TitleColumn" />
 
   <adapter
      name="type"

@@ -19,6 +19,8 @@ from zope import interface, component
 from zope.location import Location
 
 from zojax.content.space.interfaces import IContentSpace
+from zojax.geotargeting.interfaces import IGeotargetingPreference
+from zojax.authentication.utils import getPrincipal
 
 from interfaces import _, INeighborhoodWorkspace, INeighborhoodWorkspaceFactory
 
@@ -56,4 +58,6 @@ class NeighborhoodWorkspaceFactory(object):
         return False
 
     def isAvailable(self):
-        return True
+        preference = IGeotargetingPreference(getPrincipal(), None)
+        if preference is not None:
+            return preference.enabled

@@ -26,6 +26,7 @@ from zope import interface, schema, component
 
 from zojax.content.browser.table import ContainerListing
 from zojax.catalog.interfaces import ICatalog
+from zojax.geotargeting.indexes import GeotargetingQueryPlugin
 
 from zojax.neighborhood.interfaces import _
 
@@ -37,14 +38,15 @@ class NeighborhoodContentsTable(ContainerListing):
     
     msgEmptyTable = _(u'There are no neighborhood recent items.')
     
-    enabledColumns = ('modified', 'icon', 'title')
+    enabledColumns = ('modified', 'icon', 'type', 'title')
     
     def initDataset(self):
         catalog = component.getUtility(ICatalog)
         self.dataset = catalog.searchResults(typeType={'any_of': ('Portal type',)},
                                              isDraft={'any_of': (False,)},
                                              sort_order='reverse', 
-                                             sort_on='modified')
+                                             sort_on='modified',
+                                             **GeotargetingQueryPlugin()())
         
     def records(self):
         if self.batch is not None:
@@ -66,4 +68,5 @@ class NeighborhoodTypeContentsTable(NeighborhoodContentsTable):
         self.dataset = catalog.searchResults(type={'any_of': (self.context.contenttype.name,)},
                                              isDraft={'any_of': (False,)},
                                              sort_order='reverse', 
-                                             sort_on='modified')
+                                             sort_on='modified',
+                                             **GeotargetingQueryPlugin()())
