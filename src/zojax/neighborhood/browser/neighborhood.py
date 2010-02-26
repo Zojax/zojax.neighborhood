@@ -27,18 +27,7 @@ from zojax.neighborhood.interfaces import _, INeighborhoodWorkspace
 from interfaces import INeighborhoodType
 
 
-class Neighborhood(Location):
-    
-    interface.implements(INeighborhoodWorkspace, IPublishTraverse)
-
-    __name__ = 'neighborhood'
-    
-    def __init__(self, context, request):
-        self.context, self.request = context, request
-        self.__parent__ = context
-    
-    def update(self):
-        super(Neighborhood, self).update()
+class NeighborhoodWorkspaceView(object):
         
     def publishTraverse(self, request, name):
         ctype = component.queryUtility(IPortalType, name=name)

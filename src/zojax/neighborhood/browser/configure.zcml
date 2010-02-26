@@ -12,21 +12,7 @@
      for="..interfaces.INeighborhoodWorkspace"
      class=".layout.NeighborhoodLayout" />
 
-  <!-- overview workspace -->
-  <adapter
-     name="neighborhood"
-     for="zojax.content.space.interfaces.IContentSpace *"
-     provides="zope.interface.Interface"
-     factory=".neighborhood.Neighborhood"
-      />
-      
-  <class class=".neighborhood.Neighborhood">
-    
-    <allow interface="zope.publisher.interfaces.IPublishTraverse" />
-  
-  </class>
-  
-    <class class=".neighborhood.NeighborhoodType">
+  <class class=".neighborhood.NeighborhoodType">
     
     <allow interface=".interfaces.INeighborhoodType" />
   
@@ -36,7 +22,9 @@
      name="index.html"
      template="neighborhood.pt"
      for="..interfaces.INeighborhoodWorkspace"
+     class=".neighborhood.NeighborhoodWorkspaceView"
      layout="neighborhood"
+     allowed_interface="zope.publisher.interfaces.IPublishTraverse"
      />
      
   <zojax:pagelet
