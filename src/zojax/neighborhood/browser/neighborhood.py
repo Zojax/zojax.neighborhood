@@ -19,7 +19,6 @@ from zope import interface, component
 from zope.location import LocationProxy, ILocation, Location
 from zope.publisher.interfaces import NotFound, IPublishTraverse
 
-from zojax.content.type.interfaces import IPortalType
 from zojax.layoutform import Fields, PageletEditSubForm
 
 from zojax.neighborhood.interfaces import _, INeighborhoodWorkspace
@@ -28,18 +27,7 @@ from interfaces import INeighborhoodType
 
 
 class NeighborhoodWorkspaceView(object):
-        
-    def publishTraverse(self, request, name):
-        ctype = component.queryUtility(IPortalType, name=name)
-        if ctype is not None:
-            return LocationProxy(NeighborhoodType(ctype), self, name)
-        view = component.queryMultiAdapter((self, request), name=name)
-        if view is not None:
-            return view
-        raise NotFound(self, name, request)
-    
-    def browserDefault(self, request):
-        return self, ('index.html',)
+    pass
         
     
 class NeighborhoodType(Location):

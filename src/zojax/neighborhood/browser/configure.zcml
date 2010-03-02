@@ -24,8 +24,22 @@
      for="..interfaces.INeighborhoodWorkspace"
      class=".neighborhood.NeighborhoodWorkspaceView"
      layout="neighborhood"
-     allowed_interface="zope.publisher.interfaces.IPublishTraverse"
      />
+     
+  <browser:defaultView
+     for="..interfaces.INeighborhoodWorkspace"
+     name="index.html" />
+
+  <!-- publisher -->
+  <adapter
+     for="..interfaces.INeighborhoodWorkspace *"
+     factory="z3c.traverser.traverser.PluggableTraverser"
+     provides="zope.publisher.interfaces.IPublishTraverse" />
+
+  <!-- publisher plugin -->
+  <subscriber
+     provides="z3c.traverser.interfaces.ITraverserPlugin"
+     factory=".publisher.NeighborhoodPublisher" />
      
   <zojax:pagelet
      name="index.html"
