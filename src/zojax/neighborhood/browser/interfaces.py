@@ -15,7 +15,7 @@
 
 $Id$
 """
-from zope import schema, interface
+from zope import interface
 # overview workspace
 
 class INeighborhoodType(interface.Interface):
