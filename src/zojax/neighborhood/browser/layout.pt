@@ -8,7 +8,7 @@
     <a tal:attributes="href string:$url/${type/name}/">
       <img tal:attributes="src type/icon/url"
      tal:condition="type/icon/url|nothing" />
-      <tal:block tal:content="type/title" i18n:translate="" /></a>
+      <tal:block tal:content="type/title" /></a>
   </li>
       </ul>
     </div>
