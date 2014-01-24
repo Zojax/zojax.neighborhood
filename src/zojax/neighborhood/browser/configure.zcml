@@ -3,8 +3,8 @@
    xmlns:i18n="http://namespaces.zope.org/i18n"
    xmlns:zojax="http://namespaces.zope.org/zojax"
    xmlns:browser="http://namespaces.zope.org/browser"
-   i18n_domain="zojax.geotargeting">
-   
+   i18n_domain="zojax.heighborhood">
+
   <zojax:layout
      name="neighborhood"
      layout="workspace"
@@ -13,11 +13,11 @@
      class=".layout.NeighborhoodLayout" />
 
   <class class=".neighborhood.NeighborhoodType">
-    
+
     <allow interface=".interfaces.INeighborhoodType" />
-  
+
   </class>
-      
+
   <zojax:pagelet
      name="index.html"
      template="neighborhood.pt"
@@ -25,7 +25,7 @@
      class=".neighborhood.NeighborhoodWorkspaceView"
      layout="neighborhood"
      />
-     
+
   <browser:defaultView
      for="..interfaces.INeighborhoodWorkspace"
      name="index.html" />
@@ -40,25 +40,25 @@
   <subscriber
      provides="z3c.traverser.interfaces.ITraverserPlugin"
      factory=".publisher.NeighborhoodPublisher" />
-     
+
   <zojax:pagelet
      name="index.html"
      template="type.pt"
      for=".interfaces.INeighborhoodType"
      layout="neighborhood"
      />
-     
+
    <adapter
      name="neighborhood.contents"
      provides="zope.contentprovider.interfaces.IContentProvider"
      factory=".content.NeighborhoodContentsTable" />
-     
+
    <adapter
      name="neighborhood.contents"
      provides="zope.contentprovider.interfaces.IContentProvider"
      factory=".content.NeighborhoodTypeContentsTable" />
-     
-     
+
+
   <adapter
      name="icon"
      for="* * .content.NeighborhoodContentsTable"
@@ -78,6 +78,6 @@
      name="modified"
      for="* * .content.NeighborhoodContentsTable"
      factory="zojax.content.browser.table.ModifiedColumn" />
-  
-     
+
+
 </configure>
