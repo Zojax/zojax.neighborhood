@@ -2,71 +2,52 @@
    xmlns="http://namespaces.zope.org/zope"
    xmlns:browser="http://namespaces.zope.org/browser"
    xmlns:zojax="http://namespaces.zope.org/zojax"
-   i18n_domain="zojax.neighborhood">
+   i18n_domain="zojax.bulkupload">
 
-  <!-- This file is the equivalent of site.zcml and it is -->
-  <!-- used for functional testing setup -->
-
+  <exclude package="zope.app.securitypolicy.browser" />
   <include package="zojax.autoinclude" file="meta.zcml" />
-  <includeAllDependencies package="zojax.neighborhood" extras="test" />
-
-  <includeOverrides package="zojax.neighborhood.tests" file="overrides.zcml" />
-
-  <securityPolicy
-     component="zope.securitypolicy.zopepolicy.ZopeSecurityPolicy" />
+  <includeAllDependencies package="zojax.bulkupload" extras="test" />
 
   <interface
      name="DefaultSkin"
-     interface="zojax.neighborhood.tests.tests.IDefaultSkin"
+     interface="zojax.bulkupload.tests.tests.IDefaultSkin"
      type="zope.publisher.interfaces.browser.IBrowserSkinType" />
 
   <browser:defaultSkin name="DefaultSkin" />
 
-  <zojax:pagelet
-     name="test.html"
-     for="*"
-     template="test.pt"
-     permission="zope.Public" />
+  <securityPolicy
+     component="zojax.security.securitypolicy.SecurityPolicy" />
 
-  <!-- content types -->
   <zojax:content
-     name="content1"
-     title="Content 1"
-     schema="zojax.neighborhood.tests.tests.IContent"
-     class="zojax.neighborhood.tests.tests.Content" />
+     name="workspace.test"
+     title="Test Workspace"
+     class="zojax.neighborhood.tests.tests.TestWorkspace"
+     schema="zojax.neighborhood.interfaces.INeighborhoodWorkspace"
+     type="zojax.content.type.interfaces.IInactiveType" />
 
-  <class class="zojax.neighborhood.tests.tests.Content">
+  <class class="zojax.neighborhood.tests.tests.TestWorkspace">
+    <implements interface="zojax.ownership.interfaces.IInheritOwnership" />
+    <implements interface="zojax.content.type.interfaces.IRenameNotAllowed" />
+    <implements interface="zojax.extensions.interfaces.IExtensible" />
     <implements interface="zojax.content.type.interfaces.ISearchableContent" />
+    <implements interface="zojax.content.type.interfaces.IUnremoveableContent" />
+    <implements interface="zojax.content.type.interfaces.IContainerContentsAware" />
+
     <require
        permission="zope.View"
-       set_schema="zojax.content.type.interfaces.IItem"
-       interface="zojax.content.type.interfaces.IItem" />
-  </class>
+       interface="zojax.neighborhood.interfaces.INeighborhoodWorkspace
+                  zojax.content.type.interfaces.IItem
+                  zope.app.container.interfaces.IReadContainer" />
 
-  <zojax:content
-     name="content2"
-     title="Content 2"
-     schema="zojax.neighborhood.tests.tests.IPortalContent"
-     class="zojax.neighborhood.tests.tests.PortalContent"
-     type="zojax.content.type.interfaces.IPortalType" />
-
-  <class class="zojax.neighborhood.tests.tests.PortalContent">
-    <implements interface="zojax.content.type.interfaces.ISearchableContent" />
     <require
-       permission="zope.View"
-       set_schema="zojax.content.type.interfaces.IItem"
-       interface="zojax.content.type.interfaces.IItem" />
+       permission="zojax.ModifyContent"
+       set_schema="zojax.neighborhood.interfaces.INeighborhoodWorkspace
+                   zojax.content.type.interfaces.IItem"
+       interface="zope.app.container.interfaces.IWriteContainer" />
+       
   </class>
 
-  <!-- portal -->
-  <zojax:content
-     name="portal"
-     title="Portal"
-     schema="zope.app.folder.interfaces.IFolder"
-     class="zope.app.folder.folder.Folder"
-     type="zojax.content.type.interfaces.IPortalType" />
 
-  <!-- roles -->
   <role id="zope.Anonymous" title="Everybody"
         description="All users have this role implicitly" />
   <role id="zope.Manager" title="Site Manager" />
