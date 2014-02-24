@@ -4,7 +4,6 @@
    xmlns:zojax="http://namespaces.zope.org/zojax"
    i18n_domain="zojax.bulkupload">
 
-  <exclude package="zope.app.securitypolicy.browser" />
   <include package="zojax.autoinclude" file="meta.zcml" />
   <includeAllDependencies package="zojax.bulkupload" extras="test" />
 
